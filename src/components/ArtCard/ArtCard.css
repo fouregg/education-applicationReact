@@ -1,0 +1,14 @@
+.userCard{
+    width: 18rem;
+    border-radius: 20px;
+    border: 3px solid #0e8920;
+}
+
+.imgCard{
+    padding: 10px;
+    min-height: 200px;
+    background-color: #2eB940;
+    border-radius: 20px;
+    margin:-15px 20px 20px 20px;
+    width: auto!important;
+}
