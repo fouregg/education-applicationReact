@@ -1,29 +1,18 @@
 import React from 'react';
 import Card from 'react-bootstrap/Card';
-import ListGroup from 'react-bootstrap/ListGroup';
-import { EnvelopeAtFill, Phone, PersonWorkspace } from 'react-bootstrap-icons'; 
 import './ArtCard.css';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 
-const user = {
-   title: "De ou par Marcel Duchamp ou Rrose Sélavy",
-   popular: false,
-   date_start: 1941,
-   date_end: 1941,
-   artist: "Marcel Duchamp",
-   place_of_orign: "Paris",
-   artist_id: 34316,
-   medium_display: "Brown leather valise with handle containing sixty-nine miniature replicas and printed reproductions and one original, Sonate,1938, hand-colored collotype"
-}
+
 
 function ArtCard(props){
-  console.log(props);
+   const link_img = `https://www.artic.edu/iiif/2/${props.item.image_id}/full/843,/0/default.jpg`;
+   const title_text = props.item.title.length > 100 ? props.item.title.substring(0, 100) + '...' : props.item.title;
    return(
-    <Card>
+    <Card style = {{height: 650}}>
     <Card.Body>
-      <Card.Title>{props.item.title}</Card.Title>
-      <Card.Subtitle className="mb-2 text-muted">{props.item.artist_display}</Card.Subtitle>
+      <Card.Img variant='top' src={link_img}/>
+      <Card.Title>{title_text}</Card.Title>
+      <Card.Subtitle className="mb-2 text-muted">{props.item.artist_title}</Card.Subtitle>
       <Card.Text>
         {props.item.medium_display}
       </Card.Text>
