@@ -5,41 +5,71 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
-import { useEffect, useState, useRef } from 'react';
+import Pagination from 'react-bootstrap/Pagination';
+import { useEffect, useState, useRef, act } from 'react';
 
 
 const base_url = "https://api.artic.edu/api/v1";
-const limit = 100;
-
+const limit = 20;
+let activePage = 1;
 function App() {
+
   const defaultJson = useRef([]);
+  const [showPage, setShowPage] = useState(1);
   const [massArt, setArt] = useState([]);
   const [isLoading, setLoading] = useState(false);
+  const [lastPage, setLastPage] = useState(2);
 
   const setDefaultJson = (value) => {
     defaultJson.current = value;
   }
-  useEffect(() => {
-    const fetchData = async() =>
+
+  const fetchData = async() =>
     {
       try{
-        let jsonData = await fetch(`${base_url}/artworks?$page=${1}&limit=${limit}`).then(responce => responce.json());
+        let jsonData = await fetch(`${base_url}/artworks?page=${activePage}&limit=${limit}`).then(responce => responce.json());
         setArt(jsonData.data);
+        if (lastPage === 2)
+          setLastPage(jsonData.pagination.total_pages);
       }
       catch(error)
       {
         console.log("Problem to fetch data from API!");
       }
     }
-      if(massArt.length !== 0)
-        setLoading(true);
-      if(!isLoading)
-      {
-        fetchData();
-        setDefaultJson(massArt);
-      }
-  });
+      
 
+  async function nextPage()
+  {
+    activePage++;
+    setShowPage(prevPage => prevPage + 1);
+    await fetchData();
+  }
+
+  function prevPage()
+  {
+    activePage--;
+    setShowPage(prevPage => prevPage - 1);
+    fetchData();
+  }
+  
+  function getCurrectPage(num_page)
+  {
+    activePage = num_page;
+    setShowPage(num_page);
+    fetchData();
+  }
+
+  useEffect(() => {
+    if(massArt.length !== 0)
+      setLoading(true);
+    if(!isLoading)
+    {
+      fetchData();
+      setDefaultJson(massArt);
+    }
+  });
+  
   return (
     <>
       <Navbar expand="lg" className="navbar-dark bg-dark">
@@ -69,6 +99,21 @@ function App() {
             )
           }
           </Row>
+          <div className="d-flex justify-content-center">
+            <Pagination className="mt-5" size="lg">
+              <Pagination.First onClick={() => getCurrectPage(1) } />
+              <Pagination.Prev onClick={() => prevPage() }/>
+              { showPage > 2 ? <Pagination.Ellipsis disabled /> : ""}
+              { showPage > 1 ? <Pagination.Item onClick={() => getCurrectPage(showPage - 1)}>{showPage - 1}</Pagination.Item> : ""}
+              <Pagination.Item active>{showPage}</Pagination.Item>
+              { showPage < lastPage ? <Pagination.Item onClick={() => getCurrectPage(showPage + 1)}>{showPage + 1}</Pagination.Item> : ""}
+              { showPage < lastPage - 1 ? <Pagination.Ellipsis disabled /> : ""}
+              <Pagination.Next onClick={() => nextPage() }/>
+              <Pagination.Last onClick={() => getCurrectPage(lastPage)}/>
+              
+              
+            </Pagination>
+          </div>
       </Container>
     </>
   );
