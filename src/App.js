@@ -39,11 +39,11 @@ function App() {
     }
       
 
-  async function nextPage()
+  function nextPage()
   {
     activePage++;
     setShowPage(prevPage => prevPage + 1);
-    await fetchData();
+    fetchData();
   }
 
   function prevPage()
@@ -66,8 +66,8 @@ function App() {
     if(!isLoading)
     {
       fetchData();
-      setDefaultJson(massArt);
     }
+    setDefaultJson(massArt);
   });
   
   return (
