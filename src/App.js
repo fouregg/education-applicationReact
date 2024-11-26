@@ -4,6 +4,8 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
 import Navbar from 'react-bootstrap/Navbar';
 import Pagination from 'react-bootstrap/Pagination';
 import { useEffect, useState, useRef, act } from 'react';
@@ -20,7 +22,7 @@ function App() {
   const [isLoading, setLoading] = useState(false);
   const [lastPage, setLastPage] = useState(2);
 
-  const setDefaultJson = (value) => {
+  async function setDefaultJson (value) {
     defaultJson.current = value;
   }
 
@@ -31,6 +33,7 @@ function App() {
         setArt(jsonData.data);
         if (lastPage === 2)
           setLastPage(jsonData.pagination.total_pages);
+        return jsonData.data;
       }
       catch(error)
       {
@@ -39,35 +42,38 @@ function App() {
     }
       
 
-  function nextPage()
+  async function nextPage()
   {
     activePage++;
     setShowPage(prevPage => prevPage + 1);
-    fetchData();
+    setDefaultJson(await fetchData());
   }
 
-  function prevPage()
+  async function prevPage()
   {
     activePage--;
     setShowPage(prevPage => prevPage - 1);
-    fetchData();
+    setDefaultJson(await fetchData());
   }
   
-  function getCurrectPage(num_page)
+  async function getCurrectPage(num_page)
   {
     activePage = num_page;
     setShowPage(num_page);
-    fetchData();
+    setDefaultJson(await fetchData());
   }
 
   useEffect(() => {
     if(massArt.length !== 0)
+    {
+      if(!isLoading)
+        setDefaultJson(massArt);
       setLoading(true);
+    } 
     if(!isLoading)
     {
       fetchData();
     }
-    setDefaultJson(massArt);
   });
   
   return (
@@ -78,12 +84,20 @@ function App() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mx-auto">
+              <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current)}>All</Nav.Link>
               <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current.filter(item => item.artwork_type_title === "Painting"))}>Paintng</Nav.Link>
               <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current.filter(item => item.artwork_type_title === "Photograph"))}>Photograph</Nav.Link>
               <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current.filter(item => item.artwork_type_title === "Icon"))}>Icon</Nav.Link>
               <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current.filter(item => item.artwork_type_title === "Textile"))}>Textile</Nav.Link>
               <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current.filter(item => item.artwork_type_title === "Furniture"))}>Furniture</Nav.Link>
             </Nav>
+            <div className='d-flex' style={{  width: '18rem'}}>
+                  <Form.Control onChange={(event) => setArt(defaultJson.current.filter(item => item.artist_title != null ? item.artist_title.toLowerCase().includes(event.target.value.toLowerCase()):""))}
+                    type="text"
+                    placeholder="Искать автора"
+                    className=" mr-sm-2"
+                  ></Form.Control>
+            </div>
           </Navbar.Collapse>
         </Container>
       </Navbar>
@@ -110,8 +124,6 @@ function App() {
               { showPage < lastPage - 1 ? <Pagination.Ellipsis disabled /> : ""}
               <Pagination.Next onClick={() => nextPage() }/>
               <Pagination.Last onClick={() => getCurrectPage(lastPage)}/>
-              
-              
             </Pagination>
           </div>
       </Container>
