@@ -5,10 +5,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Nav from 'react-bootstrap/Nav';
 import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
 import Navbar from 'react-bootstrap/Navbar';
 import Pagination from 'react-bootstrap/Pagination';
-import { useEffect, useState, useRef, act } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 
 const base_url = "https://api.artic.edu/api/v1";
@@ -21,6 +20,7 @@ function App() {
   const [massArt, setArt] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [lastPage, setLastPage] = useState(2);
+  const [navKey, setNavKey] = useState(1);
 
   async function setDefaultJson (value) {
     defaultJson.current = value;
@@ -83,13 +83,82 @@ function App() {
           <Navbar.Brand href="#home"></Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="mx-auto">
-              <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current)}>All</Nav.Link>
-              <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current.filter(item => item.artwork_type_title === "Painting"))}>Paintng</Nav.Link>
-              <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current.filter(item => item.artwork_type_title === "Photograph"))}>Photograph</Nav.Link>
-              <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current.filter(item => item.artwork_type_title === "Icon"))}>Icon</Nav.Link>
-              <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current.filter(item => item.artwork_type_title === "Textile"))}>Textile</Nav.Link>
-              <Nav.Link className="px-5" onClick={() => setArt(defaultJson.current.filter(item => item.artwork_type_title === "Furniture"))}>Furniture</Nav.Link>
+            <Nav activeKey={navKey} className="mx-auto">
+              <Nav.Link className="px-5" eventKey={2} onClick={(event) => 
+                {
+                  if (![...event.target.classList].includes('active'))
+                  {
+                    setArt(defaultJson.current.filter(item => item.artwork_type_title === "Painting"));
+                    setNavKey(2);
+                  }
+                  else
+                  {
+                    setArt(defaultJson.current);
+                    setNavKey(1);
+                  }
+                }}>
+                Paintng
+              </Nav.Link>
+              <Nav.Link className="px-5" eventKey={3} onClick={(event) => 
+                {
+                  if (![...event.target.classList].includes('active'))
+                  {
+                    setArt(defaultJson.current.filter(item => item.artwork_type_title === "Photograph"));
+                    setNavKey(3);
+                  }
+                  else
+                  {
+                    setArt(defaultJson.current);
+                    setNavKey(1);
+                  }
+                }}>
+                Photograph
+              </Nav.Link>
+              <Nav.Link className="px-5" eventKey={4} onClick={(event) => 
+                {
+                  if (![...event.target.classList].includes('active'))
+                  {
+                    setArt(defaultJson.current.filter(item => item.artwork_type_title === "Icon"));
+                    setNavKey(4);
+                  }
+                  else
+                  {
+                    setArt(defaultJson.current);
+                    setNavKey(1);
+                  }
+                }}>
+                Icon
+              </Nav.Link>
+              <Nav.Link className="px-5" eventKey={5} onClick={(event) => 
+                {
+                  if (![...event.target.classList].includes('active'))
+                  {
+                    setArt(defaultJson.current.filter(item => item.artwork_type_title === "Textile"));
+                    setNavKey(5);
+                  }
+                  else
+                  {
+                    setArt(defaultJson.current);
+                    setNavKey(1);
+                  }
+                }}>
+                Textile
+              </Nav.Link>
+              <Nav.Link className="px-5" eventKey={6} onClick={(event) =>
+                {
+                  if (![...event.target.classList].includes('active'))
+                  {
+                    setArt(defaultJson.current.filter(item => item.artwork_type_title === "Furniture"));
+                    setNavKey(6);
+                  }
+                  else
+                  {
+                    setArt(defaultJson.current);
+                    setNavKey(1);
+                  }
+                }}>
+                Furniture
+              </Nav.Link>
             </Nav>
             <div className='d-flex' style={{  width: '18rem'}}>
                   <Form.Control onChange={(event) => setArt(defaultJson.current.filter(item => item.artist_title != null ? item.artist_title.toLowerCase().includes(event.target.value.toLowerCase()):""))}
