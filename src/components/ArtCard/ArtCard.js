@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Card from 'react-bootstrap/Card';
 import './ArtCard.css';
-
+import axios from 'axios';
 
 function ArtCard(props){
    const link_img = `https://www.artic.edu/iiif/2/${props.item.image_id}/full/843,/0/default.jpg`;
@@ -10,19 +10,19 @@ function ArtCard(props){
 
    async function fetchImage(url)
    {
-      if (await fetch(url).then(response => response.status) === 200)
-        return true;
-      else
+      return await axios(url).then(response => response.ok).catch(() => 
       {
-        console.log("not image", url);
-        setFlagImage(false);
-        return false;
-      }
+         setFlagImage(false);
+         return false;
+      });
    }
    return(
-    <Card style = {{height: 650}}>
+    <Card style = {{height: 550}} className='shadow p-3 mb-5 bg-white rounded'>
     <Card.Body>
-      {flagImage ? <Card.Img className="img-border" style={{ maxHeight: '350px'}} variant='top' src={fetchImage(link_img) ? link_img : "" }/> : ""}
+      {flagImage  
+        ? <Card.Img className="img-border" style={{ maxHeight: '320px'}} variant='top' src={fetchImage(link_img) ? link_img : "" }/> 
+        : <h5 className='text-center text-danger' style={{height: '300px'}}>No image</h5>
+      }
       <Card.Title className='text-center mt-2'>{title_text === "Untitled" ? "Without name": title_text}</Card.Title>
       <Card.Subtitle className="mb-2 text-muted text-center">
         {props.item.artist_title === null ? "Author unknown": props.item.artist_title}
